@@ -14,12 +14,13 @@ const ShippingScreen = ({ history }) => {
     const [city, setCity] = useState(shippingAddress.city)
     const [postalCode, setPostalCode] = useState(shippingAddress.postalCode)
     const [country, setCountry] = useState(shippingAddress.country)
+    const [telpon, setTelpon] = useState(shippingAddress.telpon)
     const [email, setEmail] = useState(shippingAddress.email)
 
     const dispatch = useDispatch()
     const submitHandler = (e) => {
         e.preventDefault()
-        dispatch(saveShippingAddress({address,city,postalCode,country,email}))
+        dispatch(saveShippingAddress({address,city,postalCode,country,email,telpon}))
         history.push('/payment')
     }
     return (
@@ -31,6 +32,12 @@ const ShippingScreen = ({ history }) => {
                     <Form.Group controlId='address'>
                         <Form.Label>Alamat</Form.Label>
                         <Form.Control type={'text'} placeholder={'Alamat'} value={address} required onChange={(e) => setAddress(e.target.value)}>
+                        </Form.Control>
+                    </Form.Group>
+
+                    <Form.Group controlId={'telpon'}>
+                        <Form.Label>Nomor Telepon</Form.Label>
+                        <Form.Control type={'text'} placeholder={'Nomor Telepon'} value={telpon} required onChange={(e) => setTelpon(e.target.value)}>
                         </Form.Control>
                     </Form.Group>
 

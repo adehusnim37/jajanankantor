@@ -21,7 +21,10 @@ import {
     ORDER_DELIVERED_RESET,
     ORDER_DELIVERED_REQUEST,
     ORDER_DELETE_SUCCESS,
-    ORDER_DELETE_REQUEST, ORDER_DELETE_FAIL
+    ORDER_DELETE_REQUEST, ORDER_DELETE_FAIL,
+    ORDER_UPDATEBANKCODE_REQUEST, ORDER_UPDATEBANKCODE_SUCCESS, ORDER_UPDATEBANKCODE_FAIL,
+    WEBHOOK_VA_REQUEST, WEBHOOK_VA_SUCCESS, WEBHOOK_VA_FAIL,
+    ORDER_CREATE_QRIS_REQUEST, ORDER_CREATE_QRIS_SUCCESS, ORDER_CREATE_QRIS_FAIL
 } from "../constants/orderConstants";
 
 export const orderCreateReducer = (state = {}, action) => {
@@ -37,7 +40,7 @@ export const orderCreateReducer = (state = {}, action) => {
     }
 }
 
-export const orderDetailsReducer = (state = { loading: true, orderItems : [], shippingAddress: {} }, action) => {
+export const orderDetailsReducer = (state = { loading: true, orderItems : [], shippingAddress: {}, telpon:{} }, action) => {
     switch(action.type) {
         case ORDER_DETAILS_REQUEST:
             return { ...state, loading: true }
@@ -154,4 +157,43 @@ export const orderCancelledReducer = (state = {}, action) => {
         default:
             return state
     }
+}
+
+export const orderUpdateBankCodeReducer = (state = {}, action) => {
+    switch (action.type){
+        case ORDER_UPDATEBANKCODE_REQUEST:
+            return { loading: true }
+        case ORDER_UPDATEBANKCODE_SUCCESS:
+            return {loading: false, success: true}
+        case ORDER_UPDATEBANKCODE_FAIL:
+            return { loading: false, error: action.payload}
+        default:
+            return state
+    }
+}
+
+export const orderUpdateQrisReducer = (state = {}, action) => {
+    switch (action.type){
+        case ORDER_CREATE_QRIS_REQUEST:
+            return { loading: true }
+        case ORDER_CREATE_QRIS_SUCCESS:
+            return {loading: false, success: true}
+        case ORDER_CREATE_QRIS_FAIL:
+            return { loading: false, error: action.payload}
+        default:
+            return state
+    }
+}
+
+export const webhookReducer = (state = {}, action) => {
+   switch (action.type){
+         case WEBHOOK_VA_REQUEST:
+              return { loading: true }
+         case WEBHOOK_VA_SUCCESS:
+              return {loading: false, success: true}
+         case WEBHOOK_VA_FAIL:
+              return { loading: false, error: action.payload}
+         default:
+              return state
+   }
 }

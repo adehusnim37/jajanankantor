@@ -6,9 +6,9 @@ import asyncHandler from 'express-async-handler';
 // @route   POST /api/users/login
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
-    const { email, password } = req.body
+    const {email, password} = req.body
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({email})
 
     if (user && (await user.matchPassword(password))) {
         res.json({
@@ -16,6 +16,7 @@ const authUser = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+            telpon: user.telpon,
             token: generateToken(user._id),
         })
     } else {
@@ -28,9 +29,9 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body
+    const {name, email, password, telpon} = req.body
 
-    const userExists = await User.findOne({ email })
+    const userExists = await User.findOne({email})
 
     if (userExists) {
         res.status(400)
@@ -41,6 +42,7 @@ const registerUser = asyncHandler(async (req, res) => {
         name,
         email,
         password,
+        telpon,
     })
 
     if (user) {
@@ -48,6 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            telpon: user.telpon,
             isAdmin: user.isAdmin,
             token: generateToken(user._id),
         })
@@ -68,6 +71,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            telpon: user.telpon,
             isAdmin: user.isAdmin,
         })
     } else {
@@ -84,8 +88,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
     if (user) {
         user.name = req.body.name || user.name
-        user.email = req.body.email|| user.email
-        if (req.body.password){
+        user.email = req.body.email || user.email
+        if (req.body.telpon) {
+            user.telpon = req.body.telpon
+        }
+        if (req.body.password) {
             user.password = req.body.password
         }
 
@@ -94,6 +101,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             _id: updatedUser._id,
             name: updatedUser.name,
             email: updatedUser.email,
+            telpon: updatedUser.telpon,
             isAdmin: updatedUser.isAdmin,
             token: generateToken(user._id),
         })
@@ -106,7 +114,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
-const getUsers= asyncHandler(async (req, res) => {
+const getUsers = asyncHandler(async (req, res) => {
     const users = await User.find({})
     res.json(users)
 })
@@ -114,13 +122,13 @@ const getUsers= asyncHandler(async (req, res) => {
 // @desc    delete user
 // @route   delete /api/users/:id
 // @access  Private/Admin
-const deleteUsers= asyncHandler(async (req, res) => {
+const deleteUsers = asyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id)
 
-    if(user){
+    if (user) {
         await user.remove()
-        res.json({ message: 'User removed' })
-    }else{
+        res.json({message: 'User removed'})
+    } else {
         res.status(404)
         throw new Error('User tidak ditemukan')
     }
@@ -149,6 +157,7 @@ const updateUser = asyncHandler(async (req, res) => {
     if (user) {
         user.name = req.body.name || user.name
         user.email = req.body.email || user.email
+        user.telpon = req.body.telpon || user.telpon
         user.isAdmin = (req.body.isAdmin == undefined) ? user.isAdmin : req.body.isAdmin
 
         const updatedUser = await user.save()
@@ -157,6 +166,7 @@ const updateUser = asyncHandler(async (req, res) => {
             _id: updatedUser._id,
             name: updatedUser.name,
             email: updatedUser.email,
+            telpon: updatedUser.telpon,
             isAdmin: updatedUser.isAdmin,
         })
     } else {
@@ -165,4 +175,4 @@ const updateUser = asyncHandler(async (req, res) => {
     }
 })
 
-export {authUser,getUserProfile,registerUser,updateUserProfile,getUsers, deleteUsers, getUserById, updateUser}
+export {authUser, getUserProfile, registerUser, updateUserProfile, getUsers, deleteUsers, getUserById, updateUser}

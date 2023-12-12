@@ -8,9 +8,13 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import {getOrderDetails, payOrder, deliveredOrder} from '../actions/orderActions'
 import {ORDER_PAY_RESET, ORDER_DELIVERED_RESET, ORDER_DELETE_SUCCESS} from '../constants/orderConstants'
-import { cancelledOrder } from "../actions/orderActions";
+import {cancelledOrder} from "../actions/orderActions";
+import Egate from "../components/Egate";
+import {value} from "mongoose/lib/options/propertyOptions";
+import moment from "moment";
+import Qris from "../components/Qris";
 
-const OrderScreen = ({match, history}) => {
+const OrderScreen = ({match, history, location}) => {
     const orderId = match.params.id
 
     const [sdkReady, setSdkReady] = useState(false)
@@ -32,8 +36,11 @@ const OrderScreen = ({match, history}) => {
     const [midTransToken, setMidTransToken] = useState(null)
     const [isMidTransSDKReady, setMidTransSDKReady] = useState(false)
 
+
+    const selectedBank = location.state?.selectedBank || null;
+
     const deleteHandler = (id) => {
-        if(window.confirm('Kamu yakin cancel pesanan?')) {
+        if (window.confirm('Kamu yakin cancel pesanan?')) {
             dispatch(cancelledOrder(id))
             window.alert('pesanan kamu telah dihapus dan dicancel.');
             history.push('/')
@@ -52,9 +59,9 @@ const OrderScreen = ({match, history}) => {
         )
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         addMidTransScript()
-    },[])
+    }, [])
     const addMidTransScript = async () => {
         const script = document.createElement('script')
         script.type = 'text/javascript'
@@ -92,7 +99,7 @@ const OrderScreen = ({match, history}) => {
                 }
             }
             const addMidtrans = async () => {
-                const {data:{transactionToken}} = await axios.get(`/api/config/midtrans/${orderId}`, config)
+                const {data: {transactionToken}} = await axios.get(`/api/config/midtrans/${orderId}`, config)
                 setMidTransToken(transactionToken)
             }
             addMidtrans()
@@ -111,7 +118,7 @@ const OrderScreen = ({match, history}) => {
             }
 
         }
-    }, [dispatch, orderId, successPay, successDelivered, history, userInfo, order])
+    }, [dispatch, orderId, successPay, successDelivered, history, userInfo])
 
     const successPaymentHandler = (paymentResult) => {
         console.log(paymentResult)
@@ -142,13 +149,17 @@ const OrderScreen = ({match, history}) => {
                                 {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.postalCode}, {order.shippingAddress.country}
                             </p>
                             <p>
+                                <strong> Nomor Telepon : </strong>
+                                {userInfo.telpon}
+                            </p>
+                            <p>
                                 <strong> Email Pengiriman Lisensi: </strong>
                                 {order.shippingAddress.email}
                             </p>
                             {order.isDelivered ?
                                 <Message variant='success'>
-                                    Lisensi telah dikirimkan di
-                                    email {order.shippingAddress.email} pada {order.deliveredAt}.
+                                    Produk telah dikirimkan dengan nomor resi {order._id} ke
+                                    email {order.shippingAddress.email} pada {moment(order.deliveredAt).format('YYYY MM DD HH:mm:ss')}.
                                 </Message> :
                                 <Message variant='danger'>Belum Terkirim</Message>}
 
@@ -159,10 +170,15 @@ const OrderScreen = ({match, history}) => {
                                 <strong>Metode : </strong>
                                 {order.paymentMethod}
                             </p>
+                            {!order.isPaid && order.virtualAccount &&
+                                <Message variant='success'>Virtual
+                                    Account {order.virtualAccount} - {location.state?.selectedBankLabel}</Message>
+                            }
                             {order.isPaid ? (
-                                <Message variant='success'>Terbayar pada {order.paidAt}</Message>
+                                <Message variant='success'>Terbayar
+                                    pada {moment(order.paidAt).format('YYYY MM DD HH:mm:ss')}</Message>
                             ) : (
-                                <Message variant='danger'>Belum Terbayar</Message>
+                                <Message variant='danger'>Belum Terbayar / Menunggu Pembayaran</Message>
                             )}
                         </ListGroup.Item>
 
@@ -186,7 +202,7 @@ const OrderScreen = ({match, history}) => {
                                                     </Col>
 
                                                     <Col md={4}>
-                                                        {item.qty} x ${item.price} = ${item.qty * item.price}
+                                                        {item.qty} x Rp{item.price} = Rp{item.qty * item.price}
                                                     </Col>
                                                 </Row>
                                             </ListGroup.Item>
@@ -230,40 +246,58 @@ const OrderScreen = ({match, history}) => {
                                 </Row>
                             </ListGroup.Item>
 
+
                             {!order.isPaid && (
                                 <ListGroup.Item>
-                                    <Button style={{backgroundColor: "black", width: "100%"}} onClick={() => deleteHandler(order._id)} >
+                                    <Button style={{backgroundColor: "black", width: "100%"}}
+                                            onClick={() => deleteHandler(order._id)}>
                                         Cancelled Order
                                     </Button>
                                 </ListGroup.Item>
                             )}
 
+                            {!order.isPaid && !order.virtualAccount && order.paymentMethod === 'Bank Transfer' && (
+                                <ListGroup.Item>
+                                    <Egate orderId={order._id} Bankid={selectedBank}
+                                           title={`Pembayaran menggunakan Virtual Account`}
+                                           body={`Pembayaran untuk order ${order._id}`}/>
+                                </ListGroup.Item>
+                            )}
 
-                            <div>
-                                {
-                                    !order.isPaid&&
-                                    (
-                                        midTransToken && isMidTransSDKReady ?
-                                            (
-                                                <ListGroup.Item>
-                                                    <Button style={{backgroundColor:"lightblue", width:"100%"}} variant="light" id="pay-button" onClick={()=> window.snap.pay(midTransToken)}>
-                                                        <img style={{width:"130px", height:'auto'}} src="https://docs.midtrans.com/asset/image/main/midtrans-logo.png" alt="midtrans"/>
-                                                    </Button>
-                                                </ListGroup.Item>
-                                            ):<Loader/>
-
-                                    )
-                                }
-                            </div>
-
-                            {!order.isPaid &&
-                            (<ListGroup.Item>
-                                {loadingPay && <Loader/>}
-                                {!sdkReady ? (<Loader/>) :
-                                    (<PayPalButton amount={order.totalPrice} onSuccess={successPaymentHandler}/>)
-                                }
-                            </ListGroup.Item>)
+                            {!order.isPaid && order.paymentMethod === 'QRIS' && (
+                                <ListGroup.Item>
+                                    <Qris orderId={order._id} title={`Pembayaran menggunakan Qris`}
+                                          body={`Pembayaran untuk order ${order._id}`}/>
+                                </ListGroup.Item>
+                            )
                             }
+
+
+                            {/*<div>*/}
+                            {/*    {*/}
+                            {/*        !order.isPaid&&*/}
+                            {/*        (*/}
+                            {/*            midTransToken && isMidTransSDKReady ?*/}
+                            {/*                (*/}
+                            {/*                    <ListGroup.Item>*/}
+                            {/*                        <Button style={{backgroundColor:"lightblue", width:"100%"}} variant="light" id="pay-button" onClick={()=> window.snap.pay(midTransToken)}>*/}
+                            {/*                            <img style={{width:"130px", height:'auto'}} src="https://docs.midtrans.com/asset/image/main/midtrans-logo.png" alt="midtrans"/>*/}
+                            {/*                        </Button>*/}
+                            {/*                    </ListGroup.Item>*/}
+                            {/*                ):<Loader/>*/}
+
+                            {/*        )*/}
+                            {/*    }*/}
+                            {/*</div>*/}
+
+                            {/*{!order.isPaid &&*/}
+                            {/*(<ListGroup.Item>*/}
+                            {/*    {loadingPay && <Loader/>}*/}
+                            {/*    {!sdkReady ? (<Loader/>) :*/}
+                            {/*        (<PayPalButton amount={order.totalPrice} onSuccess={successPaymentHandler}/>)*/}
+                            {/*    }*/}
+                            {/*</ListGroup.Item>)*/}
+                            {/*}*/}
 
 
                             {loadingDelivered && <Loader/>}

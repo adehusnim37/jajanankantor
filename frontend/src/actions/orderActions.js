@@ -16,7 +16,10 @@ import {
     ORDER_LIST_FAIL,
     ORDER_DELIVERED_REQUEST,
     ORDER_DELIVERED_SUCCESS,
-    ORDER_DELIVERED_FAIL, ORDER_DELETE_REQUEST, ORDER_DELETE_SUCCESS, ORDER_DELETE_FAIL
+    ORDER_DELIVERED_FAIL, ORDER_DELETE_REQUEST, ORDER_DELETE_SUCCESS, ORDER_DELETE_FAIL,
+    ORDER_UPDATEBANKCODE_REQUEST, ORDER_UPDATEBANKCODE_SUCCESS, ORDER_UPDATEBANKCODE_FAIL,
+    WEBHOOK_VA_REQUEST,WEBHOOK_VA_SUCCESS, WEBHOOK_VA_FAIL,
+    ORDER_CREATE_QRIS_REQUEST, ORDER_CREATE_QRIS_SUCCESS, ORDER_CREATE_QRIS_FAIL
 } from "../constants/orderConstants";
 import axios from "axios";
 import {USER_DELETE_FAIL, USER_DELETE_REQUEST, USER_DELETE_SUCCESS} from "../constants/userConstants";
@@ -238,3 +241,104 @@ export const cancelledOrder = (id) => async (dispatch, getState) => {
         })
     }
 }
+
+export const updateBankCode = (orderId, Bankid) => async (dispatch, getstate) => {
+    try {
+        dispatch({
+            type: ORDER_UPDATEBANKCODE_REQUEST,
+        })
+
+        const {
+            userLogin: { userInfo },
+        } = getstate()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        }
+
+        const {data} = await axios.put(`/api/orders/${orderId}/updateBankCode/${Bankid}`, {
+
+        }, config)
+
+        dispatch({
+            type: ORDER_UPDATEBANKCODE_SUCCESS,
+            payload: data
+        })
+    }catch (error) {
+        dispatch({
+            type: ORDER_UPDATEBANKCODE_FAIL,
+            payload:
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message,
+        })
+    }
+}
+
+export const CreateQRIS = (orderId) => async (dispatch, getstate) => {
+    try {
+        dispatch({
+            type: ORDER_CREATE_QRIS_REQUEST,
+        })
+
+        const {
+            userLogin: { userInfo },
+        } = getstate()
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        }
+
+        const {data} = await axios.put(`/api/orders/${orderId}/pay/qris`, {
+
+        }, config)
+
+        dispatch({
+            type: ORDER_CREATE_QRIS_SUCCESS,
+            payload: data
+        })
+    }catch (error) {
+        dispatch({
+            type: ORDER_CREATE_QRIS_FAIL,
+            payload:
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message,
+        })
+    }
+
+}
+
+export const vaWebhook = (async (dispatch) => {
+    try {
+        dispatch({
+            type: WEBHOOK_VA_REQUEST,
+        })
+        // const {
+        //     userLogin: { userInfo },
+        // } = getstate()
+        //
+        // const config = {
+        //     headers: {
+        //         Authorization: `Bearer ${userInfo.token}`,
+        //     },
+        // }
+        const {data} = await axios.post(`/api/orders/webhook/va`, {})
+        dispatch({
+            type: ORDER_UPDATEBANKCODE_SUCCESS,
+            payload: data
+        })
+    }catch (error) {
+        dispatch({
+            type: WEBHOOK_VA_FAIL,
+            payload:
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message,
+        })
+    }
+})

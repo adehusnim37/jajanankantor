@@ -7,12 +7,26 @@ const orderSchema = mongoose.Schema(
             required: true,
             ref: 'User',
         },
+        userOrder: [
+            {
+                name: {type: String, required: true},
+                email: {type: String, required: true},
+                telpon: {type: Number, required: true},
+                bank_code: {type: String},
+                price: {type: Number, required: true},
+                alamat: {type: String, required: true},
+                remark: {type: String},
+                url_callback: {type: String},
+                expired_time: {type: Date, default: () => new Date(+new Date() + 2 * 24 * 60 * 60 * 1000)},
+            }
+        ]
+        ,
         orderItems: [
             {
-                name: { type: String, required: true },
-                qty: { type: Number, required: true },
-                image: { type: String, required: true },
-                price: { type: Number, required: true },
+                name: {type: String, required: true},
+                qty: {type: Number, required: true},
+                image: {type: String, required: true},
+                price: {type: Number, required: true},
                 product: {
                     type: mongoose.Schema.Types.ObjectId,
                     required: true,
@@ -21,21 +35,30 @@ const orderSchema = mongoose.Schema(
             },
         ],
         shippingAddress: {
-            address: { type: String, required: true },
-            city: { type: String, required: true },
-            postalCode: { type: String, required: true },
-            country: { type: String, required: true },
-            email: {type: String, required:true},
+            address: {type: String, required: true},
+            city: {type: String, required: true},
+            postalCode: {type: String, required: true},
+            country: {type: String, required: true},
+            email: {type: String, required: true},
+        },
+        Bank: {
+            type: String,
+        },
+        virtualAccount: {
+            type: String,
+        },
+        qrisText: {
+            type: String
         },
         paymentMethod: {
             type: String,
             required: true,
         },
         paymentResult: {
-            id: { type: String },
-            status: { type: String },
-            update_time: { type: String },
-            email_address: { type: String },
+            id: {type: String},
+            status: {type: String},
+            update_time: {type: String},
+            email_address: {type: String},
         },
         taxPrice: {
             type: Number,

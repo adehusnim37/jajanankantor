@@ -41,7 +41,7 @@ const PaymentScreen = ({ history }) => {
 
                     </Form.Check>
 
-                    <Form.Check type='radio' label="E-Payment" id='epay' name='paymentMethod' value='Elektronik Payment (OVO,GOPAY,DANA)'
+                    <Form.Check type='radio' label="QRIS" id='epay' name='paymentMethod' value='QRIS'
                                 onChange={(e) => setPaymentMethod(e.target.value)}>
 
                     </Form.Check>

@@ -10,7 +10,9 @@ dotenv.config()
 
 export const sendMail = (order) => {
     let transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: process.env.MAIL_HOST,
+        port: process.env.MAIL_PORT,
+        secure: true,
         auth: {
             user: process.env.MAIL_ID, // generated ethereal user
             pass: process.env.MAIL_PASSWORD, // generated ethereal password
