@@ -1,13 +1,9 @@
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import React from 'react';
 import Button from 'react-bootstrap/Button';
-import {getOrderDetails, updateBankCode, vaWebhook} from '../actions/orderActions';
-import Modal from 'react-bootstrap/Modal';
-import Container from 'react-bootstrap/Container';
-import {useParams} from "react-router-dom";
+import {updateBankCode, vaWebhook} from '../actions/orderActions';
 import {useDispatch, useSelector} from "react-redux";
 import Message from "../components/Message";
-import {ORDER_PAY_RESET} from "../constants/orderConstants";
 
 function ModalPayment({ match, location, history}) {
     const orderId = match.params.orderId

@@ -2,16 +2,14 @@ import {useEffect, useState} from 'react';
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Radio from "./Radio";
 import {Container} from "react-bootstrap";
 
 import {useDispatch, useSelector} from "react-redux";
 import {CreateQRIS} from "../actions/orderActions";
-import ReactDOM from "react-dom";
 import QRCode from "react-qr-code";
 
 
-function Qris({match, title, body, orderId}) {
+function Qris({ title, body, orderId}) {
 
     const [show, setShow] = useState(false);
 
@@ -22,7 +20,6 @@ function Qris({match, title, body, orderId}) {
     const orderDetails = useSelector((state) => state.orderDetails)
     const {order, loading, error} = orderDetails
 
-    const statusQris = false
 
     const dispatch = useDispatch();
 

@@ -10,7 +10,6 @@ import {getOrderDetails, payOrder, deliveredOrder} from '../actions/orderActions
 import {ORDER_PAY_RESET, ORDER_DELIVERED_RESET, ORDER_DELETE_SUCCESS} from '../constants/orderConstants'
 import {cancelledOrder} from "../actions/orderActions";
 import Egate from "../components/Egate";
-import {value} from "mongoose/lib/options/propertyOptions";
 import moment from "moment";
 import Qris from "../components/Qris";
 

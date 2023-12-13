@@ -76,6 +76,6 @@ app.use(notFound)
 
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT
 
 app.listen(PORT, console.log(`Server berjalan di ${process.env.NODE_ENV} dan ${PORT} port`.green.bold))

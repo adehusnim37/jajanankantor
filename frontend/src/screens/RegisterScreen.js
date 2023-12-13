@@ -33,7 +33,7 @@ const RegisterScreen = ({location, history}) => {
         if (password !== confirmPassword) {
             setMessage('Konfirmasi password tidak sama.')
         } else {
-            dispatch(register(name, email, password))
+            dispatch(register(name, email, password, telpon))
         }
         //DISPATCH register
     }
