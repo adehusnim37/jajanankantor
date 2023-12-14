@@ -6,17 +6,20 @@ import {Row, Col, ListGroup, Image, Card, Button} from 'react-bootstrap'
 import {useDispatch, useSelector} from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import {getOrderDetails, payOrder, deliveredOrder} from '../actions/orderActions'
+import {getOrderDetails, payOrder, deliveredOrder, updateBankCode} from '../actions/orderActions'
 import {ORDER_PAY_RESET, ORDER_DELIVERED_RESET, ORDER_DELETE_SUCCESS} from '../constants/orderConstants'
 import {cancelledOrder} from "../actions/orderActions";
 import Egate from "../components/Egate";
 import moment from "moment";
 import Qris from "../components/Qris";
+import qris from "../components/Qris";
+import QRCode from "react-qr-code";
 
 const OrderScreen = ({match, history, location}) => {
     const orderId = match.params.id
 
     const [sdkReady, setSdkReady] = useState(false)
+
 
     const dispatch = useDispatch()
 
@@ -60,7 +63,8 @@ const OrderScreen = ({match, history, location}) => {
 
     useEffect(() => {
         addMidTransScript()
-    }, [])
+
+    }, [orderDetails])
     const addMidTransScript = async () => {
         const script = document.createElement('script')
         script.type = 'text/javascript'
@@ -110,14 +114,27 @@ const OrderScreen = ({match, history, location}) => {
             dispatch({type: ORDER_DELIVERED_RESET})
             dispatch(getOrderDetails(orderId))
         } else if (!order.isPaid) {
-            if (!window.paypal) {
-                addPayPalScript()
-            } else {
-                setSdkReady(true)
+            // if (!window.paypal) {
+            //     addPayPalScript()
+            // } else {
+            //     setSdkReady(true)
+            // }
+            if (order.paymentMethod === 'QRIS' && !order.qrisText) {
+                dispatch(getOrderDetails(orderId))
             }
-
+            if (order.paymentMethod === 'Bank Transfer' && !order.virtualAccount) {
+                dispatch(updateBankCode(orderId))
+            }
         }
-    }, [dispatch, orderId, successPay, successDelivered, history, userInfo])
+        //
+        // if(!order.isPaid && order.paymentMethod === 'QRIS' && order.qrisText){
+        //  window.location.reload();
+        //  }
+
+        // if(order && order.qrisText){
+        //     console.log('order.qrisText', order.qrisText)
+        // }
+    }, [dispatch, orderId, successPay, successDelivered, history, userInfo, order,])
 
     const successPaymentHandler = (paymentResult) => {
         console.log(paymentResult)
@@ -171,8 +188,14 @@ const OrderScreen = ({match, history, location}) => {
                             </p>
                             {!order.isPaid && order.virtualAccount &&
                                 <Message variant='success'>Virtual
-                                    Account {order.virtualAccount} - {location.state?.selectedBankLabel}</Message>
+                                    Account {order.virtualAccount} - {order.Bank}</Message>
                             }
+                            <p  className={"d-flex justify-content-center align-items-center"}>
+                            {
+                                !order.isPaid && order.paymentMethod === 'QRIS' && order.qrisText &&
+                                <QRCode value={order.qrisText}/>
+                            }
+                            </p>
                             {order.isPaid ? (
                                 <Message variant='success'>Terbayar
                                     pada {moment(order.paidAt).format('YYYY MM DD HH:mm:ss')}</Message>
@@ -263,13 +286,13 @@ const OrderScreen = ({match, history, location}) => {
                                 </ListGroup.Item>
                             )}
 
-                            {!order.isPaid && order.paymentMethod === 'QRIS' && (
-                                <ListGroup.Item>
-                                    <Qris orderId={order._id} title={`Pembayaran menggunakan Qris`}
-                                          body={`Pembayaran untuk order ${order._id}`}/>
-                                </ListGroup.Item>
-                            )
-                            }
+                            {/*{!order.isPaid && order.paymentMethod === 'QRIS' && !order.qrisText && (*/}
+                            {/*    <ListGroup.Item>*/}
+                            {/*        <Qris orderId={order._id} title={`Pembayaran menggunakan Qris`}*/}
+                            {/*              body={`Pembayaran untuk order ${order._id}`}/>*/}
+                            {/*    </ListGroup.Item>*/}
+                            {/*)*/}
+                            {/*}*/}
 
 
                             {/*<div>*/}

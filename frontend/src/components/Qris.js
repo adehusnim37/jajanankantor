@@ -10,32 +10,28 @@ import QRCode from "react-qr-code";
 
 
 function Qris({ title, body, orderId}) {
-
     const [show, setShow] = useState(false);
-
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const orderDetails = useSelector((state) => state.orderDetails)
-    const {order, loading, error} = orderDetails
-
+    const orderDetails = useSelector((state) => state.orderDetails);
+    const { order, loading, error } = orderDetails;
 
     const dispatch = useDispatch();
 
-    // Function to handle submit
-    const handleSubmit = () => {
-        dispatch(CreateQRIS(orderId))
+    const handleSubmit = async () => {
+        await dispatch(CreateQRIS(orderId));
+        window.location.reload();
     };
 
     useEffect(() => {
-
-    }, [dispatch, order.qrisText])
+    }, [order.qrisText, loading, error]);
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow} className='btn btn-block'>
-                {order.qrisText ? 'Show Qris' : 'Pembayaran Melalui Qris'}
+            <Button variant="primary" onClick={() => { handleSubmit(); }} className='btn btn-block'>
+                {'Pembayaran Melalui Qris'}
             </Button>
 
             <Modal show={show} onHide={handleClose} className={'mw-100'}>
@@ -45,29 +41,11 @@ function Qris({ title, body, orderId}) {
                 <Modal.Body>
                     <Container>
                         {body}
-                        {order.qrisText ? (
-                            <QRCode value={order.qrisText} />
-                        ) : (
-                            <p>QRIS not created yet.</p>
-                        )}
                     </Container>
                 </Modal.Body>
-
-                <Container>
-                    <Button
-                        className={'mb-3'} variant="primary"
-                        onClick={() => {
-                            handleSubmit();
-                            handleClose();
-                        }}>
-                        {order.qrisText ? 'Sudah Membayar' : 'Submit'}
-                    </Button>
-                </Container>
-
             </Modal>
         </>
     );
 }
-
 
 export default Qris;

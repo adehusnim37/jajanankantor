@@ -242,7 +242,7 @@ export const cancelledOrder = (id) => async (dispatch, getState) => {
     }
 }
 
-export const updateBankCode = (orderId, Bankid) => async (dispatch, getstate) => {
+export const updateBankCode = (orderId, Bankid, selectedBankLabel) => async (dispatch, getstate) => {
     try {
         dispatch({
             type: ORDER_UPDATEBANKCODE_REQUEST,
@@ -259,7 +259,7 @@ export const updateBankCode = (orderId, Bankid) => async (dispatch, getstate) =>
         }
 
         const {data} = await axios.put(`/api/orders/${orderId}/updateBankCode/${Bankid}`, {
-
+            selectedBankLabel : selectedBankLabel
         }, config)
 
         dispatch({

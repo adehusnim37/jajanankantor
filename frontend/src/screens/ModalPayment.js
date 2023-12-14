@@ -23,6 +23,16 @@ function ModalPayment({ match, location, history}) {
     const selectedBank = location.state?.selectedBank || null;
     const selectedBankLabel = location.state?.selectedBankLabel || null;
 
+    async function submit () {
+        try{
+            await dispatch(updateBankCode(orderId, Bankid, selectedBankLabel), dispatch(vaWebhook))
+        } catch (e) {
+            alert(e.response.data.message)
+        } finally {
+             window.location.href = `/order/${orderId}`;
+        }
+    }
+
     useEffect(() => {
     }, [dispatch, order, orderId]);
 
@@ -64,13 +74,7 @@ function ModalPayment({ match, location, history}) {
             ) : (
                 <Message variant='danger'>Belum Terbayar</Message>
             )}
-            <Button onClick={() => {
-                dispatch(updateBankCode(orderId, Bankid), dispatch(vaWebhook));
-                history.push({
-                    pathname: `/order/${orderId}`,
-                    state: { selectedBankLabel: selectedBankLabel }
-                });
-            }}>Submit Payment</Button>
+            <Button onClick={submit}>Submit Payment</Button>
         </>
     )
 }

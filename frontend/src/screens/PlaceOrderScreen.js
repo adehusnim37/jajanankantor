@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Message from "../components/Message";
 import CheckoutSteps from "../components/CheckoutSteps";
 import {Link} from "react-router-dom";
-import {createOrder} from "../actions/orderActions";
+import {createOrder, CreateQRIS} from "../actions/orderActions";
 import {cartClear} from "../actions/cartActions";
 
 const PlaceOrderScreen = ({history}) => {
@@ -29,15 +29,19 @@ const PlaceOrderScreen = ({history}) => {
     const orderCreate = useSelector((state) => state.orderCreate)
     const {order, success, error} = orderCreate
 
-    useEffect(() => {
+    useEffect(async () => {
         if (success) {
             dispatch(cartClear())
-            history.push(`/order/${order._id}`)
+            if (cart.paymentMethod === 'QRIS') {
+                dispatch(CreateQRIS(order._id));
+            }
+            window.location.href = `/order/${order._id}`
         }
+
         // eslint-disable-next-line
     }, [history, success, cart.paymentMethod, dispatch])
 
-    const placeOrderHandler = () => {
+    const placeOrderHandler = async () => {
         dispatch(createOrder({
             userOrder: cart.userOrder,
             orderItems: cart.cartItems,

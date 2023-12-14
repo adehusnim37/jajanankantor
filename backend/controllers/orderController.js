@@ -89,10 +89,14 @@ const addOrderItems = asyncHandler(async (req, res) => {
 //@access private
 const updateBankCode = asyncHandler(async (req, res) => {
     console.log(req.params.Bankid, req.params.orderId)
+    const selectedBankLabel = req.body.selectedBankLabel
+    if (!selectedBankLabel) {
+        res.status(400)
+        throw new Error('selectedBankLabel is required')
+    }
+    console.log('Selected Bank Label', selectedBankLabel)
     const order = await Order.findById(req.params.orderId)
     const Bankid = req.params.Bankid
-    const Bank = req.params.Bank
-    console.log('Bank', Bank)
 
     if (order) {
         if (!order.userOrder || order.userOrder.length === 0) {
@@ -105,6 +109,7 @@ const updateBankCode = asyncHandler(async (req, res) => {
         console.log(createdVa)
         const va = createdVa.data.virtual_account
         order.virtualAccount = va
+        order.Bank = selectedBankLabel
         console.log(order.virtualAccount)
         await order.save()
         res.json(createdVa)
