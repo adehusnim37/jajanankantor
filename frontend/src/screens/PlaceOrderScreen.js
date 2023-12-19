@@ -22,7 +22,7 @@ const PlaceOrderScreen = ({history}) => {
     cart.shippingPrice = addDecimals(cart.itemsPrice > 100 ? 0 : 100)
 
     //menghitung pajak
-    cart.taxPrice = addDecimals(Number((0.005 * cart.itemsPrice).toFixed(2)))
+    cart.taxPrice = addDecimals(Math.round((0.005 * cart.itemsPrice)))
 
     cart.totalPrice = (Number(cart.itemsPrice) + Number(cart.shippingPrice) + Number(cart.taxPrice)).toFixed(2)
 
@@ -100,7 +100,7 @@ const PlaceOrderScreen = ({history}) => {
                                                     </Col>
 
                                                     <Col md={4}>
-                                                        {item.qty} x Rp{item.price} = Rp{item.qty * item.price}
+                                                        {item.qty} x Rp{new Intl.NumberFormat('id-id').format(item.price)} = Rp{new Intl.NumberFormat('id-id').format(item.qty * item.price)}
                                                     </Col>
                                                 </Row>
                                             </ListGroup.Item>
@@ -119,28 +119,28 @@ const PlaceOrderScreen = ({history}) => {
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Harga Barang</Col>
-                                    <Col>Rp{cart.itemsPrice}</Col>
+                                    <Col>Rp{new Intl.NumberFormat('id-id').format(cart.itemsPrice)}</Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Pengiriman</Col>
-                                    <Col>Rp{cart.shippingPrice}</Col>
+                                    <Col>Rp{new Intl.NumberFormat('id-id').format(cart.shippingPrice)}</Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Biaya layanan</Col>
-                                    <Col>Rp{cart.taxPrice}</Col>
+                                    <Col>Rp{new Intl.NumberFormat('id-id').format(cart.taxPrice)}</Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Total</Col>
-                                    <Col>Rp{cart.totalPrice}</Col>
+                                    <Col>Rp{new Intl.NumberFormat('id-id').format(cart.totalPrice)}</Col>
                                 </Row>
                             </ListGroup.Item>
 

@@ -75,7 +75,7 @@ const ProductsScreen = ({ history, match }) => {
                                 />
                             </ListGroupItem>
                             <ListGroupItem>
-                                Harga: Rp.{product.price}
+                                Harga: Rp.{new Intl.NumberFormat('id-id').format(product.price)}
                             </ListGroupItem>
                             <ListGroupItem>
                                 Description: {product.description}
@@ -92,7 +92,7 @@ const ProductsScreen = ({ history, match }) => {
                                             Harga :
                                         </Col>
                                         <Col>
-                                            <strong>Rp.{product.price}</strong>
+                                            <strong>Rp.{new Intl.NumberFormat('id-id').format(product.price)}</strong>
                                         </Col>
                                     </Row>
                                 </ListGroupItem>

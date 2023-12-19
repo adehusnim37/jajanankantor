@@ -25,7 +25,7 @@ const Product = ({ product }) => {
                         />
                     </Card.Text>
 
-                    <Card.Text as={'h3'}>Rp.{product.price}</Card.Text>
+                    <Card.Text as={'h3'}>Rp.{new Intl.NumberFormat('id-id').format(product.price)}</Card.Text>
                 </Card.Body>
             </Card>
         )

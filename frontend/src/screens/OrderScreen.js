@@ -264,28 +264,28 @@ const OrderScreen = ({match, history, location}) => {
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Harga Barang</Col>
-                                    <Col>Rp.{order.itemsPrice}</Col>
+                                    <Col>Rp.{new Intl.NumberFormat('id-id').format(order.itemsPrice)}</Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Pengiriman</Col>
-                                    <Col>Rp.{order.shippingPrice}</Col>
+                                    <Col>Rp.{new Intl.NumberFormat('id-id').format(order.shippingPrice)}</Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Biaya layanan</Col>
-                                    <Col>Rp.{order.taxPrice}</Col>
+                                    <Col>Rp.{new Intl.NumberFormat('id-id').format(Math.round(order.taxPrice))}</Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Total</Col>
-                                    <Col>Rp.{order.totalPrice}</Col>
+                                    <Col>Rp.{new Intl.NumberFormat('id-id').format(Math.round(order.totalPrice))}</Col>
                                 </Row>
                             </ListGroup.Item>
 

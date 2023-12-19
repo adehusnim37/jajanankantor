@@ -82,7 +82,7 @@ const ProductListScreen = ({history, match}) => {
                             <tr key={products._id}>
                                 <td>{products._id}</td>
                                 <td>{products.name}</td>
-                                <td>Rp.{products.price}</td>
+                                <td>Rp.{new Intl.NumberFormat('id-id').format(products.price)}</td>
                                 <td>{products.category}</td>
                                 <td>{products.brand}</td>
                                 <td>

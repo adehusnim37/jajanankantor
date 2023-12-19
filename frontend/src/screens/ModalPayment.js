@@ -57,7 +57,7 @@ function ModalPayment({ match, location, history}) {
             </p>
             <p>
                 <strong>Harga:</strong>
-                {order.totalPrice}
+                {new Intl.NumberFormat('id-id').format(order.totalPrice)}
             </p>
             <p>
                 <strong>Alamat:</strong>
