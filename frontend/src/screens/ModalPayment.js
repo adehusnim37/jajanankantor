@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import {updateBankCode, vaWebhook} from '../actions/orderActions';
 import {useDispatch, useSelector} from "react-redux";
 import Message from "../components/Message";
+import Loader from "../components/Loader";
 
 function ModalPayment({ match, location, history}) {
     const orderId = match.params.orderId
@@ -11,6 +12,8 @@ function ModalPayment({ match, location, history}) {
     const bank = match.params.Bank
     console.log(Bankid)
     console.log(orderId)
+
+
 
     const dispatch = useDispatch();
 
@@ -74,7 +77,9 @@ function ModalPayment({ match, location, history}) {
             ) : (
                 <Message variant='danger'>Belum Terbayar</Message>
             )}
+            { loading ? <Loader/> : error ? <Message variant={'danger'}>{error}</Message> :
             <Button onClick={submit}>Submit Payment</Button>
+            }
         </>
     )
 }

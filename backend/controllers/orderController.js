@@ -148,6 +148,7 @@ const CreateQRIS = asyncHandler(async (req, res) => {
         console.log('createdQris', createdQris)
         const qris = createdQris.data.qris_text
         order.qrisText = qris
+        console.log(qris)
         console.log(order.qrisText)
         await order.save()
     } else {

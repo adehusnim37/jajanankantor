@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 import {PayPalButton} from 'react-paypal-button-v2'
 import {Link} from 'react-router-dom'
@@ -11,16 +11,15 @@ import {ORDER_PAY_RESET, ORDER_DELIVERED_RESET, ORDER_DELETE_SUCCESS} from '../c
 import {cancelledOrder} from "../actions/orderActions";
 import Egate from "../components/Egate";
 import moment from "moment";
-import Qris from "../components/Qris";
-import qris from "../components/Qris";
 import QRCode from "react-qr-code";
+import domtoimage from 'dom-to-image';
 
 const OrderScreen = ({match, history, location}) => {
     const orderId = match.params.id
 
+
     const [sdkReady, setSdkReady] = useState(false)
-
-
+    const qrRef = useRef();
     const dispatch = useDispatch()
 
     const orderDetails = useSelector((state) => state.orderDetails)
@@ -145,6 +144,26 @@ const OrderScreen = ({match, history, location}) => {
         dispatch(deliveredOrder(order))
     }
 
+    const downloadQRCode = () => {
+        const svg = qrRef.current.querySelector('svg');
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const canvas = document.createElement('canvas');
+        const svgSize = svg.getBoundingClientRect();
+        canvas.width = svgSize.width;
+        canvas.height = svgSize.height;
+        const ctx = canvas.getContext('2d');
+        const img = document.createElement('img');
+        img.setAttribute('src', 'data:image/svg+xml;base64,' + btoa(svgData));
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0);
+            const canvasUrl = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.href = canvasUrl;
+            link.download = `QRCode-${orderId}.png`;
+            link.click();
+        };
+    };
+
 
     return loading ? <Loader/> : error ? <Message variant='danger'>{error}</Message> :
         <>{console.log(JSON.stringify(order))}
@@ -190,11 +209,13 @@ const OrderScreen = ({match, history, location}) => {
                                 <Message variant='success'>Virtual
                                     Account {order.virtualAccount} - {order.Bank}</Message>
                             }
-                            <p  className={"d-flex justify-content-center align-items-center"}>
-                            {
-                                !order.isPaid && order.paymentMethod === 'QRIS' && order.qrisText &&
-                                <QRCode value={order.qrisText}/>
-                            }
+                            <p className={"d-flex justify-content-center align-items-center"}>
+                                {!order.isPaid && order.paymentMethod === 'QRIS' && order.qrisText && (
+                                    <QRCode
+                                        value={order.qrisText}
+                                        ref={qrRef}
+                                    />
+                                )}
                             </p>
                             {order.isPaid ? (
                                 <Message variant='success'>Terbayar
