@@ -27,6 +27,11 @@ const CartScreen = ({match,location,history}) => {
     }
 
     const checkoutHandler = (id)  => {
+        const totalAmount = cartItems.reduce((acc,item) => acc + item.qty * item.price,0);
+        if (totalAmount < 10000) {
+            alert('Order amount must be at least Rp.10.000');
+            return;
+        }
         history.push('/login?redirect=shipping')
     }
 

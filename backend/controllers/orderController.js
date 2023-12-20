@@ -61,7 +61,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
             userOrder: {
                 name: req.user.name,
                 email: req.user.email,
-                telpon: req.user.telpon,
+                telpon: shippingAddress.telpon,
                 price: totalPrice,
                 alamat: shippingAddress.address,
                 remark: orderItems[0].name,

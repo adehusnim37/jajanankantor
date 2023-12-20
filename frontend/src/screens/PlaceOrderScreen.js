@@ -29,19 +29,21 @@ const PlaceOrderScreen = ({history}) => {
     const orderCreate = useSelector((state) => state.orderCreate)
     const {order, success, error} = orderCreate
 
-    useEffect(async () => {
+    useEffect(() => {
         if (success) {
             dispatch(cartClear())
             if (cart.paymentMethod === 'QRIS') {
                 dispatch(CreateQRIS(order._id));
             }
-            window.location.href = `/order/${order._id}`
+            history.push(`/order/${order._id}`)
         }
-
-        // eslint-disable-next-line
     }, [history, success, cart.paymentMethod, dispatch])
 
     const placeOrderHandler = async () => {
+        if (cart.totalPrice < 10000) {
+            alert('Minimal Pembelian Rp10.000')
+            return;
+        }
         dispatch(createOrder({
             userOrder: cart.userOrder,
             orderItems: cart.cartItems,

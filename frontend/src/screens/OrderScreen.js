@@ -133,7 +133,7 @@ const OrderScreen = ({match, history, location}) => {
         // if(order && order.qrisText){
         //     console.log('order.qrisText', order.qrisText)
         // }
-    }, [dispatch, orderId, successPay, successDelivered, history, userInfo, order,])
+    }, [dispatch, orderId, successPay, successDelivered, history, userInfo, order])
 
     const successPaymentHandler = (paymentResult) => {
         console.log(paymentResult)
@@ -213,7 +213,6 @@ const OrderScreen = ({match, history, location}) => {
                                 {!order.isPaid && order.paymentMethod === 'QRIS' && order.qrisText && (
                                     <QRCode
                                         value={order.qrisText}
-                                        ref={qrRef}
                                     />
                                 )}
                             </p>
